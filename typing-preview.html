@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FXbuddy - Typing Animation Preview</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #eef0f5;
+      color: #000;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #8a8a8a;
+      margin-bottom: 40px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 32px;
+      max-width: 1200px;
+      width: 100%;
+    }
+    .card {
+      background: #eef0f5;
+      border-radius: 20px;
+      box-shadow: 8px 8px 16px #c8cad0, -8px -8px 16px #ffffff;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .card-label {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .card-desc {
+      font-size: 12px;
+      color: #8a8a8a;
+      text-align: center;
+      line-height: 1.5;
+    }
+    .mascot {
+      position: relative;
+      width: 112px;
+      height: 64px;
+      background: #000;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+      box-shadow: 4px 4px 10px #c8cad0, -4px -4px 10px #ffffff;
+    }
+    .glare {
+      position: absolute;
+      top: 6px;
+      right: 12px;
+      width: 20px;
+      height: 8px;
+      background: white;
+      opacity: 0.2;
+      border-radius: 999px;
+      transform: rotate(12deg);
+      z-index: 10;
+    }
+    .face {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .eyes {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    /* ============================================
+       ANIMATION 1: Focused Squint + Gentle Nod
+       Eyes squinted, whole mascot does a slow nod
+       ============================================ */
+    @keyframes nod {
+      0%, 100% { transform: rotate(0deg) translateY(0); }
+      30% { transform: rotate(2deg) translateY(1px); }
+      60% { transform: rotate(-1deg) translateY(-1px); }
+    }
+    .anim1-mascot {
+      animation: nod 1.8s ease-in-out infinite;
+    }
+    @keyframes squint-pulse {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(0.85); }
+    }
+    .anim1-face {
+      animation: squint-pulse 1.8s ease-in-out infinite;
+    }
+
+    /* ============================================
+       ANIMATION 2: Looking Down + Rhythmic Bob
+       Eyes shift down, body bobs gently
+       ============================================ */
+    @keyframes bob-down {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(2px); }
+    }
+    .anim2-mascot {
+      animation: bob-down 1s ease-in-out infinite;
+    }
+    .anim2-face {
+      transform: translateY(3px);
+    }
+    @keyframes eye-dart {
+      0%, 40%, 100% { transform: translateX(0) translateY(3px); }
+      50%, 70% { transform: translateX(-1px) translateY(3px); }
+      80% { transform: translateX(1px) translateY(3px); }
+    }
+    .anim2-eyes {
+      animation: eye-dart 2s ease-in-out infinite;
+    }
+
+    /* ============================================
+       ANIMATION 3: Happy Typing Wiggle
+       Happy arc eyes with cheerful side-to-side
+       ============================================ */
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0deg); }
+      20% { transform: rotate(-3deg); }
+      40% { transform: rotate(3deg); }
+      60% { transform: rotate(-2deg); }
+      80% { transform: rotate(2deg); }
+    }
+    .anim3-mascot {
+      animation: wiggle 0.8s ease-in-out infinite;
+    }
+
+    /* ============================================
+       ANIMATION 4: Concentrated Tilt
+       One eye bigger, head tilted, subtle pulse
+       ============================================ */
+    @keyframes concentrate-tilt {
+      0%, 100% { transform: rotate(-4deg) scale(1); }
+      50% { transform: rotate(-4deg) scale(1.02); }
+    }
+    .anim4-mascot {
+      animation: concentrate-tilt 2s ease-in-out infinite;
+    }
+    @keyframes brow-furrow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(1px); }
+    }
+    .anim4-face {
+      animation: brow-furrow 2s ease-in-out infinite;
+    }
+
+    /* ============================================
+       ANIMATION 5: Bouncy Type
+       Eyes bounce alternately like typing on keys
+       ============================================ */
+    @keyframes type-bounce-left {
+      0%, 100% { transform: translateY(0); }
+      25% { transform: translateY(-3px); }
+      50% { transform: translateY(0); }
+    }
+    @keyframes type-bounce-right {
+      0%, 50%, 100% { transform: translateY(0); }
+      75% { transform: translateY(-3px); }
+    }
+    .anim5-eye-left {
+      animation: type-bounce-left 0.5s ease-in-out infinite;
+    }
+    .anim5-eye-right {
+      animation: type-bounce-right 0.5s ease-in-out infinite;
+    }
+    @keyframes type-rock {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-2deg); }
+      75% { transform: rotate(2deg); }
+    }
+    .anim5-mascot {
+      animation: type-rock 0.5s ease-in-out infinite;
+    }
+
+    .current-badge {
+      font-size: 10px;
+      background: #000;
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <h1>FXbuddy Typing Animations</h1>
+  <p class="subtitle">Pick the one you like best</p>
+
+  <div class="grid">
+
+    <!-- CURRENT -->
+    <div class="card">
+      <span class="current-badge">Current</span>
+      <div class="mascot" style="animation: none;">
+        <div class="glare"></div>
+        <div class="face" style="animation: bounce-eyes 0.3s infinite alternate;">
+          <div class="eyes">
+            <svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="7" fill="white"/></svg>
+            <svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="7" fill="white"/></svg>
+          </div>
+        </div>
+      </div>
+      <span class="card-label">Bounce Eyes</span>
+      <span class="card-desc">Squinted eyes with a fast vertical bounce. Can feel jittery.</span>
+      <style>
+        @keyframes bounce-eyes { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+      </style>
+    </div>
+
+    <!-- ANIMATION 1 -->
+    <div class="card">
+      <div class="mascot anim1-mascot">
+        <div class="glare"></div>
+        <div class="face anim1-face">
+          <div class="eyes">
+            <svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="7" fill="white"/></svg>
+            <svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="7" fill="white"/></svg>
+          </div>
+        </div>
+      </div>
+      <span class="card-label">1. Focused Nod</span>
+      <span class="card-desc">Squinted eyes with a slow, gentle nod. Looks like he's reading along thoughtfully.</span>
+    </div>
+
+    <!-- ANIMATION 2 -->
+    <div class="card">
+      <div class="mascot anim2-mascot">
+        <div class="glare"></div>
+        <div class="face anim2-face">
+          <div class="eyes anim2-eyes">
+            <svg width="18" height="20" viewBox="0 0 18 20"><ellipse cx="9" cy="10" rx="6" ry="7" fill="white"/></svg>
+            <svg width="18" height="20" viewBox="0 0 18 20"><ellipse cx="9" cy="10" rx="6" ry="7" fill="white"/></svg>
+          </div>
+        </div>
+      </div>
+      <span class="card-label">2. Looking Down</span>
+      <span class="card-desc">Eyes shifted down as if watching you type, with a gentle breathing bob and subtle eye darts.</span>
+    </div>
+
+    <!-- ANIMATION 3 -->
+    <div class="card">
+      <div class="mascot anim3-mascot">
+        <div class="glare"></div>
+        <div class="face">
+          <div class="eyes">
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+      </div>
+      <span class="card-label">3. Happy Wiggle</span>
+      <span class="card-desc">Happy arc eyes with a cheerful side-to-side wiggle. Excited that you're creating something.</span>
+    </div>
+
+    <!-- ANIMATION 4 -->
+    <div class="card">
+      <div class="mascot anim4-mascot">
+        <div class="glare"></div>
+        <div class="face anim4-face">
+          <div class="eyes">
+            <svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="7" fill="white"/></svg>
+            <svg width="22" height="24" viewBox="0 0 22 24"><ellipse cx="11" cy="12" rx="8" ry="9" fill="white"/></svg>
+          </div>
+        </div>
+      </div>
+      <span class="card-label">4. Concentrated Tilt</span>
+      <span class="card-desc">Head tilted with one eye bigger than the other. Deep in thought, studying your prompt closely.</span>
+    </div>
+
+    <!-- ANIMATION 5 -->
+    <div class="card">
+      <div class="mascot anim5-mascot">
+        <div class="glare"></div>
+        <div class="face">
+          <div class="eyes">
+            <div class="anim5-eye-left">
+              <svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="9" fill="white"/></svg>
+            </div>
+            <div class="anim5-eye-right">
+              <svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="9" fill="white"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="card-label">5. Bouncy Type</span>
+      <span class="card-desc">Full round eyes bouncing alternately left-right like fingers hitting keys. Playful and energetic.</span>
+    </div>
+
+  </div>
+</body>
+</html>

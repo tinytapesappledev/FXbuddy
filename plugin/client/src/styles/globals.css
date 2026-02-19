@@ -1,0 +1,262 @@
+/* ============================================
+   InstantFX -- Apple Glass Design System
+   Global CSS Variables & Base Styles
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&display=swap');
+
+:root {
+  /* Base layer -- Light Neumorphism */
+  --bg-base: #eef0f5;
+  --bg-base-gradient: linear-gradient(165deg, #eef0f5 0%, #e6e9ef 100%);
+
+  /* Glass surface layers (dark-on-light) */
+  --glass-1: rgba(0, 0, 0, 0.03);
+  --glass-2: rgba(0, 0, 0, 0.05);
+  --glass-3: rgba(0, 0, 0, 0.08);
+  --glass-4: rgba(0, 0, 0, 0.12);
+
+  /* Glass borders */
+  --border-glass: rgba(255, 255, 255, 0.4);
+  --border-glass-hover: rgba(255, 255, 255, 0.6);
+  --border-glass-active: rgba(255, 255, 255, 0.8);
+
+  /* Accent -- Black (Monochrome) */
+  --accent-start: #000000;
+  --accent-end: #1a1a1a;
+  --accent-glow: rgba(0, 0, 0, 0.15);
+  --accent-surface: rgba(0, 0, 0, 0.05);
+
+  /* Text hierarchy */
+  --text-primary: #000000;
+  --text-secondary: #6b7280;
+  --text-tertiary: #8a8a8a;
+  --text-accent: #000000;
+
+  /* Status colors */
+  --status-success: #22c55e;
+  --status-success-bg: rgba(34, 197, 94, 0.1);
+  --status-error: #ef4444;
+  --status-error-bg: rgba(239, 68, 68, 0.1);
+  --status-present: #f59e0b;
+  --status-present-bg: rgba(245, 158, 11, 0.15);
+  --status-warning: #444444;
+  --status-processing: #222222;
+
+  /* Blur values */
+  --blur-sm: 12px;
+  --blur-md: 20px;
+  --blur-lg: 32px;
+
+  /* Shadows (dark, no colored tint) */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px var(--accent-glow);
+
+  /* Neumorphic shadows */
+  --shadow-neu-flat: 9px 9px 16px rgba(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5);
+  --shadow-neu-pressed: inset 6px 6px 10px 0 rgba(163,177,198, 0.7), inset -6px -6px 10px 0 rgba(255,255,255, 0.8);
+  --shadow-neu-icon: 5px 5px 10px #babecc, -5px -5px 10px #ffffff;
+  --shadow-neu-button: 6px 6px 12px #b8b9be, -6px -6px 12px #ffffff;
+  --shadow-neu-button-active: inset 4px 4px 8px #b8b9be, inset -4px -4px 8px #ffffff;
+  --shadow-glass: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-glass-lg: 0 8px 32px rgba(0, 0, 0, 0.15);
+  --shadow-glow-sm: 0 0 20px rgba(0, 0, 0, 0.15);
+  --shadow-glow-lg: 0 0 40px rgba(0, 0, 0, 0.25);
+
+  /* Mascot */
+  --mascot-body: #000000;
+  --mascot-face: #ffffff;
+  --mascot-glare: rgba(255, 255, 255, 0.20);
+
+  /* Spacing scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+}
+
+/* ============================================
+   Dark Mode -- Adobe Panel Background
+   ============================================ */
+
+.dark {
+  --bg-base: #232323;
+  --bg-base-gradient: linear-gradient(165deg, #232323 0%, #1e1e1e 100%);
+
+  --glass-1: rgba(255, 255, 255, 0.03);
+  --glass-2: rgba(255, 255, 255, 0.05);
+  --glass-3: rgba(255, 255, 255, 0.08);
+  --glass-4: rgba(255, 255, 255, 0.12);
+
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-glass-hover: rgba(255, 255, 255, 0.12);
+  --border-glass-active: rgba(255, 255, 255, 0.18);
+
+  --accent-start: #ffffff;
+  --accent-end: #d4d4d4;
+  --accent-glow: rgba(255, 255, 255, 0.1);
+  --accent-surface: rgba(255, 255, 255, 0.05);
+
+  --text-primary: #e0e0e0;
+  --text-secondary: #9ca3af;
+  --text-tertiary: #6b7280;
+  --text-accent: #ffffff;
+
+  --status-success: #4ade80;
+  --status-success-bg: rgba(74, 222, 128, 0.1);
+  --status-error: #f87171;
+  --status-error-bg: rgba(248, 113, 113, 0.1);
+  --status-present: #fbbf24;
+  --status-present-bg: rgba(251, 191, 36, 0.15);
+  --status-warning: #a3a3a3;
+  --status-processing: #d4d4d4;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 20px var(--accent-glow);
+
+  --shadow-neu-flat: 6px 6px 12px #1a1a1a, -6px -6px 12px #2c2c2c;
+  --shadow-neu-pressed: inset 4px 4px 8px #1a1a1a, inset -4px -4px 8px #2c2c2c;
+  --shadow-neu-icon: 4px 4px 8px #1a1a1a, -4px -4px 8px #2c2c2c;
+  --shadow-neu-button: 4px 4px 10px #1a1a1a, -4px -4px 10px #2c2c2c;
+  --shadow-neu-button-active: inset 3px 3px 6px #1a1a1a, inset -3px -3px 6px #2c2c2c;
+  --shadow-glass: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-glass-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-glow-sm: 0 0 20px rgba(255, 255, 255, 0.05);
+  --shadow-glow-lg: 0 0 40px rgba(255, 255, 255, 0.08);
+
+  --mascot-body: #ffffff;
+  --mascot-face: #232323;
+  --mascot-glare: rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   Base Reset & Defaults
+   ============================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-primary);
+  background: var(--bg-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em;
+}
+
+/* ============================================
+   Glass Surface Classes
+   ============================================ */
+
+.glass-surface {
+  background: var(--glass-1);
+  backdrop-filter: blur(var(--blur-md));
+  -webkit-backdrop-filter: blur(var(--blur-md));
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease-out;
+}
+
+.glass-surface:hover {
+  background: var(--glass-2);
+  border-color: var(--border-glass-hover);
+}
+
+.glass-elevated {
+  background: var(--glass-2);
+  backdrop-filter: blur(var(--blur-lg));
+  -webkit-backdrop-filter: blur(var(--blur-lg));
+  border: 1px solid var(--border-glass-hover);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.glass-input {
+  background: var(--glass-2);
+  backdrop-filter: blur(var(--blur-sm));
+  -webkit-backdrop-filter: blur(var(--blur-sm));
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  transition: all 0.2s ease-out;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+}
+
+.glass-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.glass-input:focus {
+  background: var(--glass-3);
+  border-color: var(--accent-start);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+  outline: none;
+}
+
+/* ============================================
+   Scrollbar Styling (thin, glass-like)
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--glass-3);
+  border-radius: var(--radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--glass-4);
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

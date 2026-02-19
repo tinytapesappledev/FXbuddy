@@ -1,0 +1,284 @@
+/* ============================================
+   InstantFX -- Animation Keyframes & Classes
+   ============================================ */
+
+/* Processing border glow animation */
+@keyframes border-glow {
+  0%, 100% {
+    border-color: var(--accent-start);
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.15);
+  }
+  50% {
+    border-color: var(--accent-end);
+    box-shadow: 0 0 16px rgba(139, 92, 246, 0.25);
+  }
+}
+
+.animate-border-glow {
+  animation: border-glow 2s ease-in-out infinite;
+}
+
+/* Progress bar leading edge glow */
+@keyframes progress-glow {
+  0%, 100% { box-shadow: 0 0 8px var(--accent-glow); }
+  50% { box-shadow: 0 0 16px rgba(99, 102, 241, 0.4); }
+}
+
+.animate-progress-glow {
+  animation: progress-glow 1.5s ease-in-out infinite;
+}
+
+/* Completion flash */
+@keyframes completion-flash {
+  0% {
+    background-color: var(--status-success);
+    box-shadow: 0 0 20px rgba(52, 211, 153, 0.4);
+  }
+  100% {
+    background-color: var(--status-success);
+    box-shadow: 0 0 0 rgba(52, 211, 153, 0);
+  }
+}
+
+.animate-completion-flash {
+  animation: completion-flash 0.6s ease-out;
+}
+
+/* Loading dots */
+@keyframes loading-dots {
+  0%, 20% { opacity: 0; }
+  50% { opacity: 1; }
+  80%, 100% { opacity: 0; }
+}
+
+.loading-dot:nth-child(1) { animation: loading-dots 1.4s ease-in-out infinite 0s; }
+.loading-dot:nth-child(2) { animation: loading-dots 1.4s ease-in-out infinite 0.2s; }
+.loading-dot:nth-child(3) { animation: loading-dots 1.4s ease-in-out infinite 0.4s; }
+
+/* Ripple effect for preset card clicks */
+@keyframes ripple-glow {
+  0% {
+    box-shadow: 0 0 0 0 var(--accent-glow);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+  }
+}
+
+.animate-ripple {
+  animation: ripple-glow 0.4s ease-out;
+}
+
+/* Slide up for progress overlay on completion */
+@keyframes slide-up-out {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+.animate-slide-up-out {
+  animation: slide-up-out 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* --- Mascot Animations --- */
+
+@keyframes blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+.mascot-blink {
+  animation: blink 4s infinite;
+}
+
+@keyframes look-around {
+  0%, 40%, 100% { transform: translateX(0); }
+  45%, 55% { transform: translateX(-4px); }
+  60%, 70% { transform: translateX(4px); }
+  75% { transform: translateX(0); }
+}
+
+.mascot-idle {
+  animation: look-around 6s infinite ease-in-out;
+}
+
+@keyframes happy-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-3deg); }
+  40% { transform: rotate(3deg); }
+  60% { transform: rotate(-2deg); }
+  80% { transform: rotate(2deg); }
+}
+
+.mascot-typing {
+  animation: happy-wiggle 0.8s ease-in-out infinite;
+}
+
+@keyframes roll-eyes {
+  0% { transform: rotate(0deg) translateX(2px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(2px) rotate(-360deg); }
+}
+
+.mascot-waiting {
+  animation: roll-eyes 1s linear infinite;
+}
+
+@keyframes dizzy {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2) rotate(10deg); }
+  100% { transform: scale(0.8) rotate(-10deg); }
+}
+
+.mascot-dizzy-left {
+  animation: dizzy 1s infinite alternate;
+}
+
+.mascot-dizzy-right {
+  animation: dizzy 1s infinite alternate-reverse;
+}
+
+/* Surprised star jolt */
+@keyframes star-jolt {
+  0% { transform: translateY(0) scale(1); }
+  20% { transform: translateY(2px) scaleY(0.9) scaleX(1.1); }
+  40% { transform: translateY(-5px) scaleY(1.08) scaleX(0.95); }
+  70% { transform: translateY(-1px) scale(1); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.mascot-surprised {
+  animation: star-jolt 0.6s ease-out;
+}
+
+/* Star eye pulse */
+@keyframes star-pulse {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.15) rotate(15deg); }
+}
+
+.mascot-star-eye {
+  animation: star-pulse 0.8s ease-in-out infinite;
+}
+
+/* Victory Jump for success */
+@keyframes victory-jump {
+  0% { transform: scaleX(1.1) scaleY(0.9) translateY(0); }
+  20% { transform: scaleX(0.9) scaleY(1.1) translateY(-8px); }
+  50% { transform: scaleX(1) scaleY(1) translateY(-10px); }
+  70% { transform: scaleX(1) scaleY(1) translateY(-4px); }
+  85% { transform: scaleX(1.05) scaleY(0.95) translateY(0); }
+  100% { transform: scaleX(1) scaleY(1) translateY(0); }
+}
+
+.mascot-victory-jump {
+  animation: victory-jump 0.7s ease-out;
+}
+
+/* Head Shake for error */
+@keyframes head-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 50%, 90% { transform: translateX(-3px); }
+  30%, 70% { transform: translateX(3px); }
+}
+
+.mascot-head-shake {
+  animation: head-shake 0.5s ease-in-out infinite;
+}
+
+/* Double Bounce for mascot click (face / eyes) */
+@keyframes double-bounce {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  15% { transform: translateY(-6px) scaleY(1.05); }
+  30% { transform: translateY(0) scaleY(0.95) scaleX(1.05); }
+  45% { transform: translateY(-3px) scaleY(1.02); }
+  60% { transform: translateY(0) scaleY(1); }
+}
+
+.mascot-double-bounce {
+  animation: double-bounce 0.8s ease-out;
+}
+
+/* Full-body jump for mascot click */
+@keyframes mascot-jump {
+  0%   { transform: translateY(0); }
+  12%  { transform: translateY(2px); }
+  30%  { transform: translateY(-18px); }
+  50%  { transform: translateY(0); }
+  65%  { transform: translateY(-8px); }
+  80%  { transform: translateY(0); }
+  90%  { transform: translateY(-3px); }
+  100% { transform: translateY(0); }
+}
+
+.mascot-jump {
+  animation: mascot-jump 0.7s ease-out;
+}
+
+/* Sleeping gentle bob */
+@keyframes sleeping-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(2px) rotate(-2deg); }
+}
+
+.mascot-sleeping {
+  animation: sleeping-bob 2s ease-in-out infinite;
+}
+
+/* Waiting eye spin (left eye) */
+@keyframes waiting-spin-left {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.mascot-waiting-eye-left {
+  animation: waiting-spin-left 1.2s linear infinite;
+}
+
+/* Waiting eye spin (right eye, opposite) */
+@keyframes waiting-spin-right {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+.mascot-waiting-eye-right {
+  animation: waiting-spin-right 1.2s linear infinite;
+}
+
+/* Mouth babble for typing */
+@keyframes babble {
+  0%, 100% { transform: scaleX(1); }
+  25% { transform: scaleX(0.8) scaleY(1.2); }
+  50% { transform: scaleX(1.1) scaleY(0.9); }
+  75% { transform: scaleX(0.9) scaleY(1.1); }
+}
+
+.mascot-mouth-babble {
+  animation: babble 0.4s ease-in-out infinite;
+}
+
+/* Sleeping Z float */
+@keyframes z-float {
+  0% { transform: translateY(0) scale(1); opacity: 0.8; }
+  50% { transform: translateY(-6px) scale(1.1); opacity: 0.4; }
+  100% { transform: translateY(-12px) scale(0.8); opacity: 0; }
+}
+
+.mascot-zzz {
+  /* No animation on container — individual z's animate independently */
+}
+
+.mascot-z1 {
+  animation: z-float 2s ease-in-out infinite;
+}
+
+.mascot-z2 {
+  animation: z-float 2s ease-in-out infinite 0.6s;
+}

@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FXbuddy - All Animation Previews</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #eef0f5;
+      color: #000;
+      padding: 40px 20px;
+    }
+    h1 { font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+    .subtitle { font-size: 14px; color: #8a8a8a; text-align: center; margin-bottom: 48px; }
+
+    .section {
+      max-width: 1300px;
+      margin: 0 auto 56px auto;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      padding-left: 4px;
+    }
+    .section-desc {
+      font-size: 12px;
+      color: #8a8a8a;
+      margin-bottom: 20px;
+      padding-left: 4px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: #eef0f5;
+      border-radius: 18px;
+      box-shadow: 6px 6px 14px #c8cad0, -6px -6px 14px #ffffff;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .card-label { font-size: 13px; font-weight: 600; }
+    .card-desc { font-size: 11px; color: #8a8a8a; text-align: center; line-height: 1.5; }
+
+    .mascot {
+      position: relative;
+      width: 100px;
+      height: 58px;
+      background: #000;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+      box-shadow: 3px 3px 8px #c8cad0, -3px -3px 8px #ffffff;
+    }
+    .glare {
+      position: absolute;
+      top: 5px; right: 10px;
+      width: 18px; height: 7px;
+      background: white; opacity: 0.2;
+      border-radius: 999px; transform: rotate(12deg); z-index: 10;
+    }
+    .face {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .eyes {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+
+    .current-badge {
+      font-size: 9px; background: #000; color: #fff;
+      padding: 2px 8px; border-radius: 999px;
+      text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
+    }
+    .divider {
+      width: 100%; max-width: 1300px; margin: 0 auto;
+      height: 1px; background: #d0d3da; margin-bottom: 56px;
+    }
+
+    /* ─── SVG helpers ─── */
+    svg { display: block; }
+
+    /* ==================================================================
+       WAITING ANIMATIONS
+       ================================================================== */
+
+    /* Current: spiral eyes + roll */
+    @keyframes roll-eyes {
+      0% { transform: rotate(0deg) translateX(2px) rotate(0deg); }
+      100% { transform: rotate(360deg) translateX(2px) rotate(-360deg); }
+    }
+    @keyframes spin-left { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes spin-right { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+    .wait-cur-body { animation: roll-eyes 1s linear infinite; }
+    .wait-cur-eye-l { animation: spin-left 1.2s linear infinite; }
+    .wait-cur-eye-r { animation: spin-right 1.2s linear infinite; }
+
+    /* W1: Pendulum Swing — mascot swings side to side like a clock */
+    @keyframes pendulum {
+      0%, 100% { transform: rotate(-5deg); }
+      50% { transform: rotate(5deg); }
+    }
+    .w1-body { animation: pendulum 1.5s ease-in-out infinite; transform-origin: top center; }
+
+    /* W2: Pulse Breathe — mascot gently scales up and down */
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+    .w2-body { animation: breathe 2s ease-in-out infinite; }
+
+    /* W3: Hourglass Eyes — eyes flip upside down alternately */
+    @keyframes hourglass-flip {
+      0%, 45% { transform: scaleY(1); }
+      50%, 95% { transform: scaleY(-1); }
+      100% { transform: scaleY(1); }
+    }
+    .w3-eye { animation: hourglass-flip 2s ease-in-out infinite; }
+    @keyframes gentle-rock-w3 {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-2deg); }
+      75% { transform: rotate(2deg); }
+    }
+    .w3-body { animation: gentle-rock-w3 3s ease-in-out infinite; }
+
+    /* W4: Orbit Eyes — eyes orbit around center */
+    @keyframes orbit {
+      0% { transform: rotate(0deg) translateY(-2px); }
+      100% { transform: rotate(360deg) translateY(-2px); }
+    }
+    .w4-eyes { animation: orbit 2s linear infinite; }
+
+    /* W5: Loading Blink — eyes blink in sequence like loading dots */
+    @keyframes load-blink-l {
+      0%, 30% { transform: scaleY(1); }
+      15% { transform: scaleY(0.1); }
+    }
+    @keyframes load-blink-r {
+      0%, 15%, 45%, 100% { transform: scaleY(1); }
+      30% { transform: scaleY(0.1); }
+    }
+    .w5-eye-l { animation: load-blink-l 1s ease-in-out infinite; }
+    .w5-eye-r { animation: load-blink-r 1s ease-in-out infinite; }
+    @keyframes w5-bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(2px); }
+    }
+    .w5-body { animation: w5-bob 1s ease-in-out infinite; }
+
+    /* ==================================================================
+       SUCCESS ANIMATIONS
+       ================================================================== */
+
+    /* Current: happy eyes + bounce */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-3px); }
+      60% { transform: translateY(1px); }
+    }
+    .suc-cur-body { animation: bounce 0.4s ease-out; }
+
+    /* S1: Victory Jump — big jump up with squash/stretch */
+    @keyframes victory-jump {
+      0% { transform: scaleX(1.1) scaleY(0.9) translateY(0); }
+      20% { transform: scaleX(0.9) scaleY(1.1) translateY(-8px); }
+      50% { transform: scaleX(1) scaleY(1) translateY(-10px); }
+      70% { transform: scaleX(1) scaleY(1) translateY(-4px); }
+      85% { transform: scaleX(1.05) scaleY(0.95) translateY(0); }
+      100% { transform: scaleX(1) scaleY(1) translateY(0); }
+    }
+    .s1-body { animation: victory-jump 0.7s ease-out infinite; }
+
+    /* S2: Happy Spin — full 360 rotation celebration */
+    @keyframes happy-spin {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.05); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+    .s2-body { animation: happy-spin 1s ease-in-out infinite; }
+
+    /* S3: Sparkle Pulse — grows with a glow effect */
+    @keyframes sparkle-pulse {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.08); filter: brightness(1.15); }
+    }
+    .s3-body { animation: sparkle-pulse 1.2s ease-in-out infinite; }
+
+    /* S4: Double Bounce — bouncy like a ball */
+    @keyframes double-bounce {
+      0%, 100% { transform: translateY(0) scaleY(1); }
+      15% { transform: translateY(-6px) scaleY(1.05); }
+      30% { transform: translateY(0) scaleY(0.95) scaleX(1.05); }
+      45% { transform: translateY(-3px) scaleY(1.02); }
+      60% { transform: translateY(0) scaleY(1); }
+    }
+    .s4-body { animation: double-bounce 0.8s ease-out infinite; }
+
+    /* S5: Wiggle Celebrate — fast excited wiggle */
+    @keyframes celebrate-wiggle {
+      0%, 100% { transform: rotate(0deg); }
+      10% { transform: rotate(-6deg); }
+      20% { transform: rotate(6deg); }
+      30% { transform: rotate(-5deg); }
+      40% { transform: rotate(5deg); }
+      50% { transform: rotate(-3deg); }
+      60% { transform: rotate(3deg); }
+      70% { transform: rotate(-1deg); }
+      80% { transform: rotate(1deg); }
+    }
+    .s5-body { animation: celebrate-wiggle 0.6s ease-out infinite; }
+
+    /* ==================================================================
+       ERROR ANIMATIONS
+       ================================================================== */
+
+    /* Current: X eyes + dizzy scale/rotate */
+    @keyframes dizzy {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2) rotate(10deg); }
+      100% { transform: scale(0.8) rotate(-10deg); }
+    }
+    .err-cur-body { animation: dizzy 1s infinite alternate; }
+
+    /* E1: Shake — rapid horizontal shake */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 50%, 90% { transform: translateX(-3px); }
+      30%, 70% { transform: translateX(3px); }
+    }
+    .e1-body { animation: shake 0.5s ease-in-out infinite; }
+
+    /* E2: Deflate — sad shrink down */
+    @keyframes deflate {
+      0%, 100% { transform: scale(1) translateY(0); }
+      50% { transform: scale(0.92) translateY(2px); }
+    }
+    .e2-body { animation: deflate 1.5s ease-in-out infinite; }
+    /* Sad droopy eyes */
+
+    /* E3: Glitch — digital glitch effect */
+    @keyframes glitch {
+      0%, 100% { transform: translate(0, 0) skewX(0); }
+      10% { transform: translate(-2px, 1px) skewX(2deg); }
+      20% { transform: translate(2px, -1px) skewX(-1deg); }
+      30% { transform: translate(0, 0) skewX(0); }
+      70% { transform: translate(1px, 1px) skewX(-2deg); }
+      80% { transform: translate(-1px, -1px) skewX(1deg); }
+    }
+    .e3-body { animation: glitch 0.8s ease-in-out infinite; }
+
+    /* E4: Facepalm Tilt — tilts forward dramatically */
+    @keyframes facepalm {
+      0%, 100% { transform: rotate(0deg) translateY(0); }
+      50% { transform: rotate(8deg) translateY(3px); }
+    }
+    .e4-body { animation: facepalm 2s ease-in-out infinite; }
+
+    /* E5: Alarm Buzz — vibrates rapidly like an alarm */
+    @keyframes buzz {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      10% { transform: translate(-1px, 0) rotate(-1deg); }
+      20% { transform: translate(1px, 0) rotate(1deg); }
+      30% { transform: translate(-1px, 0) rotate(0deg); }
+      40% { transform: translate(1px, 0) rotate(-1deg); }
+      50% { transform: translate(0, 0) rotate(1deg); }
+      60% { transform: translate(-1px, 0) rotate(0deg); }
+      70% { transform: translate(1px, 0) rotate(-1deg); }
+      80% { transform: translate(0, 0) rotate(1deg); }
+      90% { transform: translate(-1px, 0) rotate(0deg); }
+    }
+    .e5-body { animation: buzz 0.3s linear infinite; }
+
+    /* ==================================================================
+       SURPRISED ANIMATIONS
+       ================================================================== */
+
+    /* Current: big eyes + bounce */
+    .sur-cur-body { animation: bounce 0.4s ease-out; }
+
+    /* SU1: Pop Scale — pops up big then settles */
+    @keyframes pop-scale {
+      0% { transform: scale(0.8); }
+      40% { transform: scale(1.15); }
+      70% { transform: scale(0.97); }
+      100% { transform: scale(1); }
+    }
+    .su1-body { animation: pop-scale 0.5s ease-out infinite; }
+
+    /* SU2: Jolt Back — jumps back in surprise */
+    @keyframes jolt-back {
+      0% { transform: translateY(0) scale(1); }
+      20% { transform: translateY(2px) scaleY(0.9) scaleX(1.1); }
+      40% { transform: translateY(-6px) scaleY(1.1) scaleX(0.95); }
+      70% { transform: translateY(-1px) scale(1); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    .su2-body { animation: jolt-back 0.6s ease-out infinite; }
+
+    /* SU3: Eyes Widen — body stays still, eyes get even bigger pulse */
+    @keyframes eyes-widen {
+      0%, 100% { transform: scale(1); }
+      30% { transform: scale(1.2); }
+      60% { transform: scale(1.05); }
+    }
+    .su3-eyes { animation: eyes-widen 0.8s ease-out infinite; }
+
+    /* SU4: Double Take — quick look left-right */
+    @keyframes double-take {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      20% { transform: translateX(-4px) rotate(-3deg); }
+      40% { transform: translateX(4px) rotate(3deg); }
+      60% { transform: translateX(-2px) rotate(-1deg); }
+      80% { transform: translateX(0) rotate(0deg); }
+    }
+    .su4-body { animation: double-take 0.7s ease-out infinite; }
+
+    /* SU5: Gasp Float — floats up like gasping */
+    @keyframes gasp-float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-5px) scale(1.04); }
+    }
+    .su5-body { animation: gasp-float 1s ease-in-out infinite; }
+
+    /* ==================================================================
+       SLEEPING ANIMATIONS
+       ================================================================== */
+
+    /* Current: closed eyes + gentle bob + Z's */
+    @keyframes sleeping-bob {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(2px) rotate(-2deg); }
+    }
+    .slp-cur-body { animation: sleeping-bob 2s ease-in-out infinite; }
+    @keyframes z-float {
+      0% { transform: translateY(0) scale(1); opacity: 0.8; }
+      50% { transform: translateY(-6px) scale(1.1); opacity: 0.4; }
+      100% { transform: translateY(-12px) scale(0.8); opacity: 0; }
+    }
+    .zzz { position: absolute; top: -8px; right: -4px; }
+    .z1 { animation: z-float 2s ease-in-out infinite; }
+    .z2 { animation: z-float 2s ease-in-out infinite 0.6s; }
+
+    /* SL1: Deep Sleep — bigger sway + slow breathing scale */
+    @keyframes deep-sleep {
+      0%, 100% { transform: rotate(-4deg) scale(1); }
+      50% { transform: rotate(2deg) scale(1.03); }
+    }
+    .sl1-body { animation: deep-sleep 3s ease-in-out infinite; }
+
+    /* SL2: Snore Puff — rhythmic expansion like snoring */
+    @keyframes snore {
+      0%, 100% { transform: scaleX(1) scaleY(1); }
+      30% { transform: scaleX(1.04) scaleY(0.97); }
+      60% { transform: scaleX(0.97) scaleY(1.03); }
+    }
+    .sl2-body { animation: snore 2.5s ease-in-out infinite; }
+
+    /* SL3: Drift Float — slowly drifts side to side */
+    @keyframes drift {
+      0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+      25% { transform: translateX(-3px) translateY(-1px) rotate(-1deg); }
+      50% { transform: translateX(0) translateY(1px) rotate(0deg); }
+      75% { transform: translateX(3px) translateY(-1px) rotate(1deg); }
+    }
+    .sl3-body { animation: drift 4s ease-in-out infinite; }
+
+    /* SL4: Head Nod Off — head droops then catches itself */
+    @keyframes nod-off {
+      0%, 70%, 100% { transform: rotate(0deg) translateY(0); }
+      40% { transform: rotate(6deg) translateY(3px); }
+      55% { transform: rotate(-2deg) translateY(-1px); }
+    }
+    .sl4-body { animation: nod-off 3s ease-in-out infinite; }
+
+    /* SL5: Cozy Cocoon — gentle uniform pulse like wrapped in blanket */
+    @keyframes cocoon {
+      0%, 100% { transform: scale(1) rotate(0deg); border-radius: 14px; }
+      50% { transform: scale(0.97) rotate(-1deg); border-radius: 18px; }
+    }
+    .sl5-body { animation: cocoon 3s ease-in-out infinite; }
+
+  </style>
+</head>
+<body>
+
+  <h1>FXbuddy Animation Previews</h1>
+  <p class="subtitle">Current animation + 5 alternatives for each state</p>
+
+  <!-- ═══════════════════════ WAITING ═══════════════════════ -->
+  <div class="section">
+    <div class="section-title">Waiting (Generating)</div>
+    <div class="section-desc">Plays while the AI is processing the user's request</div>
+    <div class="grid">
+
+      <div class="card">
+        <span class="current-badge">Current</span>
+        <div class="mascot">
+          <div class="glare"></div>
+          <div class="face wait-cur-body">
+            <div class="eyes">
+              <svg class="wait-cur-eye-l" width="18" height="22" viewBox="0 0 18 22"><circle cx="9" cy="11" r="8" fill="white"/><path d="M9 3 A8 8 0 0 1 17 11 A5.5 5.5 0 0 1 9 16.5 A3 3 0 0 1 6 11 A1.5 1.5 0 0 1 9 9.5" stroke="black" stroke-width="2" fill="none"/></svg>
+              <svg class="wait-cur-eye-r" width="18" height="22" viewBox="0 0 18 22"><circle cx="9" cy="11" r="8" fill="white"/><path d="M9 3 A8 8 0 0 1 17 11 A5.5 5.5 0 0 1 9 16.5 A3 3 0 0 1 6 11 A1.5 1.5 0 0 1 9 9.5" stroke="black" stroke-width="2" fill="none"/></svg>
+            </div>
+          </div>
+        </div>
+        <span class="card-label">Spiral Roll</span>
+        <span class="card-desc">Spiral eyes spin while body rolls around.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot w1-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="9" fill="white"/><ellipse cx="9" cy="14" rx="3" ry="3" fill="black" opacity="0.5"/></svg>
+            <svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="9" fill="white"/><ellipse cx="9" cy="14" rx="3" ry="3" fill="black" opacity="0.5"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">1. Pendulum</span>
+        <span class="card-desc">Swings like a clock pendulum. Eyes look down patiently.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot w2-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="9" fill="white"/></svg>
+            <svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="9" fill="white"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">2. Breathe Pulse</span>
+        <span class="card-desc">Gentle breathing scale. Calm and patient.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot w3-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <div class="w3-eye"><svg width="18" height="22" viewBox="0 0 18 22"><circle cx="9" cy="11" r="7" fill="white"/><circle cx="9" cy="8" r="3" fill="black" opacity="0.4"/></svg></div>
+            <div class="w3-eye"><svg width="18" height="22" viewBox="0 0 18 22"><circle cx="9" cy="11" r="7" fill="white"/><circle cx="9" cy="8" r="3" fill="black" opacity="0.4"/></svg></div>
+          </div></div>
+        </div>
+        <span class="card-label">3. Hourglass</span>
+        <span class="card-desc">Eyes flip upside down like sand in an hourglass.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes w4-eyes">
+            <svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="9" fill="white"/></svg>
+            <svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="9" fill="white"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">4. Orbit Eyes</span>
+        <span class="card-desc">Eyes orbit in a circle. Watching progress spin.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot w5-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <div class="w5-eye-l"><svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="9" fill="white"/></svg></div>
+            <div class="w5-eye-r"><svg width="18" height="24" viewBox="0 0 18 24"><ellipse cx="9" cy="12" rx="7" ry="9" fill="white"/></svg></div>
+          </div></div>
+        </div>
+        <span class="card-label">5. Loading Blink</span>
+        <span class="card-desc">Eyes blink one after another like loading dots.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════ SUCCESS ═══════════════════════ -->
+  <div class="section">
+    <div class="section-title">Success</div>
+    <div class="section-desc">Plays when generation completes successfully</div>
+    <div class="grid">
+
+      <div class="card">
+        <span class="current-badge">Current</span>
+        <div class="mascot suc-cur-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">Bounce</span>
+        <span class="card-desc">Happy eyes with a quick bounce up.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot s1-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">1. Victory Jump</span>
+        <span class="card-desc">Big squash-stretch jump. Very celebratory.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot s2-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">2. Happy Spin</span>
+        <span class="card-desc">Full 360 celebratory spin. Pure joy.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot s3-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">3. Sparkle Pulse</span>
+        <span class="card-desc">Gentle glow/pulse. Calm satisfaction.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot s4-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">4. Double Bounce</span>
+        <span class="card-desc">Bouncy ball physics. Playful and snappy.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot s5-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 12 Q9 0, 15 12" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">5. Wiggle Celebrate</span>
+        <span class="card-desc">Excited fast wiggle. Can't contain the hype.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════ ERROR ═══════════════════════ -->
+  <div class="section">
+    <div class="section-title">Error</div>
+    <div class="section-desc">Plays when something goes wrong</div>
+    <div class="grid">
+
+      <div class="card">
+        <span class="current-badge">Current</span>
+        <div class="mascot">
+          <div class="glare"></div>
+          <div class="face err-cur-body"><div class="eyes">
+            <svg width="16" height="16" viewBox="0 0 16 16"><line x1="3" y1="3" x2="13" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="13" y1="3" x2="3" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>
+            <svg width="16" height="16" viewBox="0 0 16 16"><line x1="3" y1="3" x2="13" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="13" y1="3" x2="3" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">Dizzy</span>
+        <span class="card-desc">X eyes with scale/rotate dizzy effect.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot e1-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="16" height="16" viewBox="0 0 16 16"><line x1="3" y1="3" x2="13" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="13" y1="3" x2="3" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>
+            <svg width="16" height="16" viewBox="0 0 16 16"><line x1="3" y1="3" x2="13" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="13" y1="3" x2="3" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">1. Head Shake</span>
+        <span class="card-desc">Rapid side-to-side shake. "Nope, that didn't work."</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot e2-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 2 Q9 14, 15 2" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="14" viewBox="0 0 18 14"><path d="M3 2 Q9 14, 15 2" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">2. Sad Deflate</span>
+        <span class="card-desc">Droopy sad eyes, slowly deflates. Feeling bummed.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot e3-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="16" height="16" viewBox="0 0 16 16"><line x1="3" y1="3" x2="13" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="13" y1="3" x2="3" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>
+            <svg width="16" height="16" viewBox="0 0 16 16"><line x1="3" y1="3" x2="13" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="13" y1="3" x2="3" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">3. Glitch</span>
+        <span class="card-desc">Digital glitch/skew. Something broke internally.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot e4-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">4. Facepalm</span>
+        <span class="card-desc">Tilts forward, eyes shut. Embarrassed about the error.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot e5-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="16" height="16" viewBox="0 0 16 16"><line x1="3" y1="3" x2="13" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="13" y1="3" x2="3" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>
+            <svg width="16" height="16" viewBox="0 0 16 16"><line x1="3" y1="3" x2="13" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="13" y1="3" x2="3" y2="13" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">5. Alarm Buzz</span>
+        <span class="card-desc">Rapid vibrating buzz. Urgent error alert.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════ SURPRISED ═══════════════════════ -->
+  <div class="section">
+    <div class="section-title">Surprised</div>
+    <div class="section-desc">Plays when switching to the Effects tab or unexpected events</div>
+    <div class="grid">
+
+      <div class="card">
+        <span class="current-badge">Current</span>
+        <div class="mascot sur-cur-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+            <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">Bounce</span>
+        <span class="card-desc">Big wide eyes with a single bounce.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot su1-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+            <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">1. Pop Scale</span>
+        <span class="card-desc">Pops up big then settles. Cartoon surprise.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot su2-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+            <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">2. Jolt Back</span>
+        <span class="card-desc">Squashes down then jolts upward. Physical startle.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes su3-eyes">
+            <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+            <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">3. Eyes Widen</span>
+        <span class="card-desc">Body stays still, eyes pulse even bigger. Subtle shock.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot su4-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+            <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">4. Double Take</span>
+        <span class="card-desc">Quick look left-right. "Wait, what?!"</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot su5-body">
+          <div class="glare"></div>
+          <div class="face"><div class="eyes">
+            <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+            <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">5. Gasp Float</span>
+        <span class="card-desc">Floats upward gently. Awestruck and dreamy.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════ SLEEPING ═══════════════════════ -->
+  <div class="section">
+    <div class="section-title">Sleeping</div>
+    <div class="section-desc">Plays when the user is idle for a while</div>
+    <div class="grid">
+
+      <div class="card">
+        <span class="current-badge">Current</span>
+        <div class="mascot slp-cur-body" style="overflow:visible">
+          <div class="glare"></div>
+          <div class="zzz"><svg width="20" height="24" viewBox="0 0 20 24"><text x="10" y="10" fill="white" font-size="10" font-weight="bold" text-anchor="middle" opacity="0.8" class="z1">z</text><text x="15" y="6" fill="white" font-size="7" font-weight="bold" text-anchor="middle" opacity="0.5" class="z2">z</text></svg></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">Gentle Bob + Z's</span>
+        <span class="card-desc">Soft sway with floating Z's.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot sl1-body" style="overflow:visible">
+          <div class="glare"></div>
+          <div class="zzz"><svg width="20" height="24" viewBox="0 0 20 24"><text x="10" y="10" fill="white" font-size="10" font-weight="bold" text-anchor="middle" opacity="0.8" class="z1">z</text><text x="15" y="6" fill="white" font-size="7" font-weight="bold" text-anchor="middle" opacity="0.5" class="z2">z</text></svg></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">1. Deep Sleep</span>
+        <span class="card-desc">Bigger sway with breathing scale. Out cold.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot sl2-body" style="overflow:visible">
+          <div class="glare"></div>
+          <div class="zzz"><svg width="20" height="24" viewBox="0 0 20 24"><text x="10" y="10" fill="white" font-size="10" font-weight="bold" text-anchor="middle" opacity="0.8" class="z1">z</text><text x="15" y="6" fill="white" font-size="7" font-weight="bold" text-anchor="middle" opacity="0.5" class="z2">z</text></svg></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">2. Snore Puff</span>
+        <span class="card-desc">Rhythmic expand/contract like snoring breaths.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot sl3-body" style="overflow:visible">
+          <div class="glare"></div>
+          <div class="zzz"><svg width="20" height="24" viewBox="0 0 20 24"><text x="10" y="10" fill="white" font-size="10" font-weight="bold" text-anchor="middle" opacity="0.8" class="z1">z</text><text x="15" y="6" fill="white" font-size="7" font-weight="bold" text-anchor="middle" opacity="0.5" class="z2">z</text></svg></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">3. Drift Float</span>
+        <span class="card-desc">Slowly drifts side to side. Dreaming peacefully.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot sl4-body" style="overflow:visible">
+          <div class="glare"></div>
+          <div class="zzz"><svg width="20" height="24" viewBox="0 0 20 24"><text x="10" y="10" fill="white" font-size="10" font-weight="bold" text-anchor="middle" opacity="0.8" class="z1">z</text><text x="15" y="6" fill="white" font-size="7" font-weight="bold" text-anchor="middle" opacity="0.5" class="z2">z</text></svg></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">4. Nod Off</span>
+        <span class="card-desc">Head droops forward then catches itself. Dozing off.</span>
+      </div>
+
+      <div class="card">
+        <div class="mascot sl5-body" style="overflow:visible">
+          <div class="glare"></div>
+          <div class="zzz"><svg width="20" height="24" viewBox="0 0 20 24"><text x="10" y="10" fill="white" font-size="10" font-weight="bold" text-anchor="middle" opacity="0.8" class="z1">z</text><text x="15" y="6" fill="white" font-size="7" font-weight="bold" text-anchor="middle" opacity="0.5" class="z2">z</text></svg></div>
+          <div class="face"><div class="eyes">
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+            <svg width="18" height="10" viewBox="0 0 18 10"><path d="M3 7 Q9 2, 15 7" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+          </div></div>
+        </div>
+        <span class="card-label">5. Cozy Cocoon</span>
+        <span class="card-desc">Gentle uniform pulse, corners round more. Snug.</span>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

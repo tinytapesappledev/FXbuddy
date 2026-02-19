@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FXbuddy - Surprised Animation Preview</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #eef0f5;
+      color: #000;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    .subtitle { font-size: 14px; color: #8a8a8a; margin-bottom: 12px; }
+    .context { font-size: 12px; color: #666; margin-bottom: 40px; max-width: 600px; text-align: center; line-height: 1.6; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 28px;
+      max-width: 1300px;
+      width: 100%;
+    }
+    .card {
+      background: #eef0f5;
+      border-radius: 18px;
+      box-shadow: 6px 6px 14px #c8cad0, -6px -6px 14px #ffffff;
+      padding: 28px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .card-label { font-size: 14px; font-weight: 600; }
+    .card-desc { font-size: 11px; color: #8a8a8a; text-align: center; line-height: 1.5; }
+    .mascot {
+      position: relative;
+      width: 112px; height: 64px;
+      background: #000; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: visible;
+      box-shadow: 4px 4px 10px #c8cad0, -4px -4px 10px #ffffff;
+    }
+    .glare {
+      position: absolute; top: 5px; right: 10px;
+      width: 18px; height: 7px;
+      background: white; opacity: 0.2;
+      border-radius: 999px; transform: rotate(12deg); z-index: 10;
+    }
+    .face { position: relative; display: flex; align-items: center; justify-content: center; }
+    .eyes { display: flex; align-items: center; justify-content: center; gap: 12px; }
+    svg { display: block; }
+
+    .current-badge {
+      font-size: 9px; background: #000; color: #fff;
+      padding: 2px 8px; border-radius: 999px;
+      text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
+    }
+
+    /* Current: big ovals + bounce */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-3px); }
+      60% { transform: translateY(1px); }
+    }
+    .cur-body { animation: bounce 0.4s ease-out infinite; }
+
+    /* 1: Star Eyes — five-pointed stars that scale-pulse */
+    @keyframes star-pulse {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.15) rotate(15deg); }
+    }
+    .s1-eye { animation: star-pulse 0.8s ease-in-out infinite; }
+    @keyframes s1-jolt {
+      0% { transform: translateY(0) scale(1); }
+      20% { transform: translateY(2px) scaleY(0.9) scaleX(1.1); }
+      40% { transform: translateY(-5px) scaleY(1.08) scaleX(0.95); }
+      70% { transform: translateY(-1px) scale(1); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    .s1-body { animation: s1-jolt 0.6s ease-out infinite; }
+
+    /* 2: Sparkle/Diamond Eyes — diamond shapes that twinkle */
+    @keyframes diamond-twinkle {
+      0%, 100% { transform: rotate(45deg) scale(1); opacity: 1; }
+      50% { transform: rotate(45deg) scale(0.85); opacity: 0.7; }
+    }
+    .s2-eye { animation: diamond-twinkle 0.6s ease-in-out infinite; }
+    @keyframes s2-pop {
+      0% { transform: scale(0.9); }
+      30% { transform: scale(1.08); }
+      60% { transform: scale(0.98); }
+      100% { transform: scale(1); }
+    }
+    .s2-body { animation: s2-pop 0.5s ease-out infinite; }
+
+    /* 3: Flash Eyes — eyes flash bright then settle, like a camera flash / FX burst */
+    @keyframes flash-burst {
+      0% { transform: scale(0.5); opacity: 0.3; }
+      30% { transform: scale(1.3); opacity: 1; }
+      60% { transform: scale(0.9); opacity: 0.9; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .s3-eye { animation: flash-burst 0.7s ease-out infinite; }
+    @keyframes s3-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    .s3-body { animation: s3-float 1s ease-in-out infinite; }
+
+    /* 4: Cross/Plus Eyes — like a targeting reticle, spins */
+    @keyframes reticle-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(90deg); }
+    }
+    .s4-eye { animation: reticle-spin 0.8s ease-in-out infinite; }
+    @keyframes s4-double-take {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      20% { transform: translateX(-3px) rotate(-2deg); }
+      40% { transform: translateX(3px) rotate(2deg); }
+      60% { transform: translateX(-1px) rotate(0deg); }
+    }
+    .s4-body { animation: s4-double-take 0.7s ease-out infinite; }
+
+    /* 5: Wowed Circles — concentric rings that ripple outward */
+    @keyframes ring-ripple {
+      0% { r: 3; opacity: 1; }
+      100% { r: 9; opacity: 0; }
+    }
+    @keyframes s5-gasp {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-3px) scale(1.04); }
+    }
+    .s5-body { animation: s5-gasp 1s ease-in-out infinite; }
+  </style>
+</head>
+<body>
+
+  <h1>Surprised Animations</h1>
+  <p class="subtitle">For the Effects tab — needs eye designs that feel "effects-y"</p>
+  <p class="context">These play when the user switches to the Effects tab. The eyes should convey "wow, look at all these effects!" — think sparkles, stars, flashes, targeting reticles.</p>
+
+  <div class="grid">
+
+    <!-- CURRENT -->
+    <div class="card">
+      <span class="current-badge">Current</span>
+      <div class="mascot cur-body">
+        <div class="glare"></div>
+        <div class="face"><div class="eyes">
+          <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+          <svg width="22" height="22" viewBox="0 0 22 22"><ellipse cx="11" cy="11" rx="9" ry="10" fill="white"/></svg>
+        </div></div>
+      </div>
+      <span class="card-label">Big Ovals</span>
+      <span class="card-desc">Just rounder versions of the normal eyes. Doesn't feel special.</span>
+    </div>
+
+    <!-- 1: Star Eyes -->
+    <div class="card">
+      <div class="mascot s1-body">
+        <div class="glare"></div>
+        <div class="face"><div class="eyes">
+          <div class="s1-eye">
+            <svg width="22" height="22" viewBox="0 0 22 22">
+              <polygon points="11,1 13.5,7.5 20.5,8 15.2,12.5 16.8,19.5 11,15.5 5.2,19.5 6.8,12.5 1.5,8 8.5,7.5" fill="white"/>
+            </svg>
+          </div>
+          <div class="s1-eye">
+            <svg width="22" height="22" viewBox="0 0 22 22">
+              <polygon points="11,1 13.5,7.5 20.5,8 15.2,12.5 16.8,19.5 11,15.5 5.2,19.5 6.8,12.5 1.5,8 8.5,7.5" fill="white"/>
+            </svg>
+          </div>
+        </div></div>
+      </div>
+      <span class="card-label">1. Star Eyes</span>
+      <span class="card-desc">Five-pointed stars that pulse and rotate. Starstruck by the effects.</span>
+    </div>
+
+    <!-- 2: Diamond/Sparkle Eyes -->
+    <div class="card">
+      <div class="mascot s2-body">
+        <div class="glare"></div>
+        <div class="face"><div class="eyes">
+          <div class="s2-eye">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <rect x="4" y="4" width="12" height="12" rx="2" fill="white"/>
+            </svg>
+          </div>
+          <div class="s2-eye">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <rect x="4" y="4" width="12" height="12" rx="2" fill="white"/>
+            </svg>
+          </div>
+        </div></div>
+      </div>
+      <span class="card-label">2. Diamond Sparkle</span>
+      <span class="card-desc">Diamond shapes that twinkle. Like gems catching light.</span>
+    </div>
+
+    <!-- 3: Flash Burst Eyes -->
+    <div class="card">
+      <div class="mascot s3-body">
+        <div class="glare"></div>
+        <div class="face"><div class="eyes">
+          <div class="s3-eye">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+              <!-- Four-pointed starburst -->
+              <path d="M12 2 L14 9 L21 12 L14 15 L12 22 L10 15 L3 12 L10 9 Z" fill="white"/>
+            </svg>
+          </div>
+          <div class="s3-eye">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+              <path d="M12 2 L14 9 L21 12 L14 15 L12 22 L10 15 L3 12 L10 9 Z" fill="white"/>
+            </svg>
+          </div>
+        </div></div>
+      </div>
+      <span class="card-label">3. Flash Burst</span>
+      <span class="card-desc">Four-pointed starburst that flashes big. Like an FX lens flare.</span>
+    </div>
+
+    <!-- 4: Reticle/Crosshair Eyes -->
+    <div class="card">
+      <div class="mascot s4-body">
+        <div class="glare"></div>
+        <div class="face"><div class="eyes">
+          <div class="s4-eye">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <circle cx="10" cy="10" r="7" fill="none" stroke="white" stroke-width="2.5"/>
+              <line x1="10" y1="1" x2="10" y2="6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="10" y1="14" x2="10" y2="19" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="1" y1="10" x2="6" y2="10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="14" y1="10" x2="19" y2="10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="s4-eye">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <circle cx="10" cy="10" r="7" fill="none" stroke="white" stroke-width="2.5"/>
+              <line x1="10" y1="1" x2="10" y2="6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="10" y1="14" x2="10" y2="19" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="1" y1="10" x2="6" y2="10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <line x1="14" y1="10" x2="19" y2="10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div></div>
+      </div>
+      <span class="card-label">4. Crosshair</span>
+      <span class="card-desc">Targeting reticle eyes that spin. Locking onto the effects.</span>
+    </div>
+
+    <!-- 5: Heart Eyes -->
+    <div class="card">
+      <div class="mascot" style="animation: none;">
+        <div class="glare"></div>
+        <div class="face s5-body"><div class="eyes">
+          <div class="s1-eye">
+            <svg width="22" height="20" viewBox="0 0 22 20">
+              <path d="M11 18 C5 12, 0 8, 3 4 C5 1, 9 2, 11 5 C13 2, 17 1, 19 4 C22 8, 17 12, 11 18Z" fill="white"/>
+            </svg>
+          </div>
+          <div class="s1-eye">
+            <svg width="22" height="20" viewBox="0 0 22 20">
+              <path d="M11 18 C5 12, 0 8, 3 4 C5 1, 9 2, 11 5 C13 2, 17 1, 19 4 C22 8, 17 12, 11 18Z" fill="white"/>
+            </svg>
+          </div>
+        </div></div>
+      </div>
+      <span class="card-label">5. Heart Eyes</span>
+      <span class="card-desc">Heart-shaped eyes that pulse. Falling in love with the effects gallery.</span>
+    </div>
+
+  </div>
+
+</body>
+</html>
