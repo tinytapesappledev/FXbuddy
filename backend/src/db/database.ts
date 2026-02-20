@@ -37,7 +37,8 @@ function initSQLite(): DB {
   sqliteDb.pragma('journal_mode = WAL');
   sqliteDb.pragma('foreign_keys = ON');
 
-  const schemaPath = path.join(__dirname, 'schema.sql');
+  // schema.sql lives in src; at runtime __dirname is dist/db, so use project root
+  const schemaPath = path.join(__dirname, '../../src/db/schema.sql');
   const schema = fs.readFileSync(schemaPath, 'utf-8');
   sqliteDb.exec(schema);
 
