@@ -206,13 +206,19 @@ router.post('/webhook', async (req: Request, res: Response): Promise<void> => {
 
       case 'customer.subscription.updated': {
         const subscription = event.data.object as Stripe.Subscription;
-        const priceId = subscription.items.data[0]?.price?.id;
-        const plan = priceId ? PRICE_ID_TO_PLAN[priceId] : null;
-
         const user = await db.getOne('SELECT id FROM users WHERE stripe_subscription_id = $1', [subscription.id]);
-        if (user && plan) {
-          await changePlan(user.id, plan as Exclude<PlanId, 'free'>);
-          console.log(`[Billing] Plan changed: user=${user.id} plan=${plan}`);
+        if (!user) break;
+
+        if (subscription.status === 'canceled' || subscription.status === 'unpaid') {
+          await db.run('UPDATE users SET plan = $1, stripe_subscription_id = NULL, subscription_credits = 0 WHERE id = $2', ['free', user.id]);
+          console.log(`[Billing] Subscription ended: user=${user.id} downgraded to free`);
+        } else {
+          const priceId = subscription.items.data[0]?.price?.id;
+          const plan = priceId ? PRICE_ID_TO_PLAN[priceId] : null;
+          if (plan) {
+            await changePlan(user.id, plan as Exclude<PlanId, 'free'>);
+            console.log(`[Billing] Plan changed: user=${user.id} plan=${plan}`);
+          }
         }
         break;
       }
