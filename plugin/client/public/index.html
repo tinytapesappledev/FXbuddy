@@ -7,6 +7,9 @@
   <!-- Adobe CEP Interface (browser fallback included) -->
   <script src="CSInterface.js"></script>
   <script>
+    window.__FXBUDDY_API_BASE__ = 'https://fxbuddy-production.up.railway.app';
+  </script>
+  <script>
     try {
       var stored = localStorage.getItem('fxbuddy-dark-mode');
       if (stored === 'true' || (stored === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {

@@ -4,6 +4,7 @@ import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import { authMiddleware } from '../auth/middleware';
+import { isS3Enabled, uploadToS3, getS3Key } from '../services/s3.service';
 
 const UPLOADS_DIR = path.join(__dirname, '../../uploads');
 
@@ -83,6 +84,13 @@ router.post('/', (req: Request, res: Response, next) => {
 
     console.log(`[Upload] File received: ${req.file.originalname} -> ${req.file.filename} (${(req.file.size / 1024 / 1024).toFixed(1)}MB)`);
 
+    if (isS3Enabled()) {
+      const s3Key = getS3Key('upload', req.file.filename);
+      uploadToS3(req.file.path, s3Key).catch((err) => {
+        console.warn(`[Upload] S3 backup upload failed: ${err.message}`);
+      });
+    }
+
     res.json({
       fileId,
       filename: req.file.filename,
@@ -117,6 +125,15 @@ router.post('/image', (req: Request, res: Response) => {
     const imageUrl = `/api/uploads/${req.file.filename}`;
 
     console.log(`[Upload] Image received: ${req.file.originalname} -> ${req.file.filename} (${(req.file.size / 1024).toFixed(0)}KB) url=${imageUrl}`);
+
+    if (isS3Enabled()) {
+      const ext = path.extname(req.file.filename).toLowerCase();
+      const mimeMap: Record<string, string> = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml' };
+      const s3Key = getS3Key('upload', req.file.filename);
+      uploadToS3(req.file.path, s3Key, mimeMap[ext] || 'application/octet-stream').catch((err) => {
+        console.warn(`[Upload] S3 image backup failed: ${err.message}`);
+      });
+    }
 
     res.json({
       fileId,

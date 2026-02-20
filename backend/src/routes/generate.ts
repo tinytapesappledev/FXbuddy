@@ -9,6 +9,7 @@ import { logTransaction } from '../credits/transactionLog';
 import { getCreditCost } from '../credits/planConfig';
 import { ModelTier, AIModel } from '../types';
 import { authMiddleware } from '../auth/middleware';
+import { isS3Enabled, getS3DownloadUrl, getS3Key } from '../services/s3.service';
 
 const UPLOADS_DIR = path.join(__dirname, '../../uploads');
 const OUTPUTS_DIR = path.join(__dirname, '../../outputs');
@@ -99,12 +100,24 @@ router.get('/status/:jobId', (req: Request, res: Response): void => {
   res.json({ jobId: state.id, status: state.status, progress: state.progress, resultUrl: state.resultUrl, error: state.error });
 });
 
-router.get('/download/:jobId', (req: Request, res: Response): void => {
+router.get('/download/:jobId', async (req: Request, res: Response): Promise<void> => {
   const jobId = req.params.jobId as string;
+
+  if (isS3Enabled()) {
+    try {
+      const s3Key = getS3Key('output', `${jobId}.mp4`);
+      const url = await getS3DownloadUrl(s3Key);
+      res.redirect(url);
+      return;
+    } catch {
+      // Fall through to local file
+    }
+  }
+
   const outputPath = path.join(OUTPUTS_DIR, `${jobId}.mp4`);
   if (!fs.existsSync(outputPath)) { res.status(404).json({ error: 'Output not found' }); return; }
   res.setHeader('Content-Type', 'video/mp4');
-  res.setHeader('Content-Disposition', `attachment; filename="fxbuddy_${req.params.jobId}.mp4"`);
+  res.setHeader('Content-Disposition', `attachment; filename="fxbuddy_${jobId}.mp4"`);
   fs.createReadStream(outputPath).pipe(res);
 });
 

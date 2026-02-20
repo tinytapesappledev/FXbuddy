@@ -10,6 +10,7 @@ import { logGeneration } from '../utils/costTracker';
 import { refundCredits } from '../credits/creditManager';
 import { getCreditCost } from '../credits/planConfig';
 import { GenerationJob, GenerationType, AIProvider, AIModel } from '../types';
+import { isS3Enabled, uploadToS3, getS3DownloadUrl, getS3Key } from './s3.service';
 
 const OUTPUTS_DIR = path.join(__dirname, '../../outputs');
 
@@ -201,7 +202,20 @@ async function processJob(
       writer.on('error', reject);
     });
 
-    // Step 3: Log cost and mark complete
+    // Step 3: Upload to S3/R2 if configured
+    let resultUrl = `/api/generate/download/${jobId}`;
+    if (isS3Enabled()) {
+      try {
+        const s3Key = getS3Key('output', `${jobId}.mp4`);
+        await uploadToS3(outputPath, s3Key);
+        resultUrl = await getS3DownloadUrl(s3Key);
+        console.log(`[Worker] Job ${jobId}: uploaded to S3 (${s3Key})`);
+      } catch (s3Err: any) {
+        console.warn(`[Worker] Job ${jobId}: S3 upload failed, using local fallback:`, s3Err.message);
+      }
+    }
+
+    // Step 4: Log cost and mark complete
     const durationSec = state.duration ?? 5;
     const costUsd = calculateCost(model, durationSec, resolution);
     state.costUsd = costUsd;
@@ -212,7 +226,7 @@ async function processJob(
 
     state.status = 'completed';
     state.progress = 100;
-    state.resultUrl = `/api/generate/download/${jobId}`;
+    state.resultUrl = resultUrl;
     io?.emit('generation:progress', { jobId, status: state.status, progress: state.progress, resultUrl: state.resultUrl });
     io?.emit('generation:completed', { jobId, resultUrl: state.resultUrl });
 
