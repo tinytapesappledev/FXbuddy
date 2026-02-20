@@ -77,9 +77,10 @@ function initSQLite(): DB {
   return {
     query(sql, params = []) {
       const pgSql = convertPgToSqlite(sql);
+      const clean = sanitizeParamsForSqlite(params);
       const stmt = sqliteDb.prepare(pgSql);
       try {
-        const rows = stmt.all(...params);
+        const rows = stmt.all(...clean);
         return { rows, rowCount: rows.length };
       } catch {
         return { rows: [], rowCount: 0 };
@@ -87,12 +88,14 @@ function initSQLite(): DB {
     },
     run(sql, params = []) {
       const pgSql = convertPgToSqlite(sql);
-      const result = sqliteDb.prepare(pgSql).run(...params);
+      const clean = sanitizeParamsForSqlite(params);
+      const result = sqliteDb.prepare(pgSql).run(...clean);
       return { changes: result.changes };
     },
     getOne(sql, params = []) {
       const pgSql = convertPgToSqlite(sql);
-      return sqliteDb.prepare(pgSql).get(...params) || null;
+      const clean = sanitizeParamsForSqlite(params);
+      return sqliteDb.prepare(pgSql).get(...clean) || null;
     },
     exec(sql) {
       sqliteDb.exec(sql);
@@ -111,6 +114,18 @@ function convertPgToSqlite(sql: string): string {
   // Convert TIMESTAMPTZ to TEXT
   s = s.replace(/\bTIMESTAMPTZ\b/gi, 'TEXT');
   return s;
+}
+
+/** SQLite accepts only number, string, bigint, buffer, null. Convert booleans/undefined. */
+function sanitizeParamsForSqlite(params: any[]): any[] {
+  return params.map((p) => {
+    if (p === undefined) return null;
+    if (typeof p === 'boolean') return p ? 1 : 0;
+    if (p !== null && typeof p === 'object' && !Buffer.isBuffer(p) && typeof p !== 'bigint') {
+      return JSON.stringify(p);
+    }
+    return p;
+  });
 }
 
 // ─── PostgreSQL Implementation ───────────────────────────────────────────────
