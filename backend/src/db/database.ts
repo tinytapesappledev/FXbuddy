@@ -136,8 +136,8 @@ async function initPostgres(): Promise<DB> {
   const { Pool } = require('pg');
   pgPool = new Pool({ connectionString: DATABASE_URL, ssl: { rejectUnauthorized: false } });
 
-  // Run schema
-  const schemaPath = path.join(__dirname, 'pg-schema.sql');
+  // pg-schema.sql lives in src; at runtime __dirname is dist/db
+  const schemaPath = path.join(__dirname, '../../src/db/pg-schema.sql');
   const schema = fs.readFileSync(schemaPath, 'utf-8');
   await pgPool.query(schema);
 
